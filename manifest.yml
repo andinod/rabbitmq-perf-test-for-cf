@@ -16,7 +16,7 @@ applications:
 #      CMESSAGES:
 #      CONFIRM:
 #      CONFIRM_TIMEOUT:
-      CONSUMERS: 1
+      CONSUMERS: 20
 #      CONSUMER_CHANNEL_COUNT:
 #      CONSUMER_LATENCY:
 #      CONSUMER_RATE:
@@ -42,7 +42,7 @@ applications:
 #      OUTPUT_FILE:
 #      PMESSAGES:
 #      PREDECLARED:
-      PRODUCERS: 1
+      PRODUCERS: 10
 #      PRODUCER_CHANNEL_COUNT:
 #      PRODUCER_RANDOM_START_DELAY:
 #      PRODUCER_SCHEDULER_THREADS:
@@ -51,9 +51,9 @@ applications:
 #      QOS:
 #      QUEUE:
 #      QUEUE_ARGS:
-#      QUEUE_PATTERN:
-#      QUEUE_PATTERN_FROM:
-#      QUEUE_PATTERN_TO:
+      QUEUE_PATTERN: test-%d
+      QUEUE_PATTERN_FROM: 1
+      QUEUE_PATTERN_TO: 10
 #      RANDOM_ROUTING_KEY:
 #      RATE:
 #      ROUTING_KEY:
@@ -62,7 +62,7 @@ applications:
 #      SIZE:
 #      SKIP_BINDING_QUEUES:
 #      SLOW_START:
-#      TIME:
+      TIME: 120
 #      TYPE:
 #      URI:
 #      URIS:
