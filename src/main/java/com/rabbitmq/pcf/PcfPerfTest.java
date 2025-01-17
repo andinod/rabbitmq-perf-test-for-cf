@@ -76,11 +76,20 @@ public class PcfPerfTest {
         String uris = null;
         for (String serviceType : servicesType.keySet()) {
             JsonArray services = servicesType.getAsJsonArray(serviceType);
-            uris = extractUrisFromServices(services, service -> service.get("tags").getAsJsonArray().contains(new JsonPrimitive("amqp")));
+	    // Checking if this is a9s service or pcf 
+	    // detected a9s -> true
+	    // detected no a9s assuming pcf -> false
+	    if (services.get(0).getAsJsonObject().get("label").getAsString().contains("a9s")) {
+	        // a9s instance was detected passing 1 to the function
+            	uris = extractUrisFromServices(services, service -> true, true );
+            }else{
+	        // a9s instance not detected passing 0 to the function 
+	    	uris = extractUrisFromServices(services, service -> service.get("tags").getAsJsonArray().contains(new JsonPrimitive("amqp")), false );
+	    }
             if (uris != null) {
                 break;
             }
-            uris = extractUrisFromServices(services, service -> true);
+            uris = extractUrisFromServices(services, service -> true, false );
             if (uris != null) {
                 break;
             }
@@ -88,14 +97,25 @@ public class PcfPerfTest {
         return uris;
     }
 
-    static String extractUrisFromServices(JsonArray services, Predicate<JsonObject> shouldInspectService) {
+    static String extractUrisFromServices(JsonArray services, Predicate<JsonObject> shouldInspectService, boolean a9s ) {
         for (JsonElement service : services) {
             if (shouldInspectService.test(service.getAsJsonObject())) {
                 JsonObject credentials = services.get(0).getAsJsonObject().get("credentials").getAsJsonObject();
-                if (credentials.get("uris") == null && credentials.get("urls") == null) {
-                    break;
-                }
-                JsonArray uris = credentials.get("uris") == null ? credentials.get("urls").getAsJsonArray() : credentials.get("uris").getAsJsonArray();
+		JsonArray uris = new JsonArray();
+		// deciding according to the case if the a9s instance is detected
+		if (a9s) {
+                	if (credentials.get("uri") == null)  {
+                    		break;
+                	}
+                	uris.add(credentials.get("uri") == null ? credentials.get("http_api_uri").getAsJsonPrimitive() : credentials.get("uri").getAsJsonPrimitive());
+
+		}else {
+			if (credentials.get("uris") == null && credentials.get("urls") == null) {
+                    		break;
+                	}
+			uris = credentials.get("uris") == null ? credentials.get("urls").getAsJsonArray() : credentials.get("uris").getAsJsonArray();
+		}
+
                 Stream.Builder<String> builder = Stream.builder();
                 uris.forEach(uri -> builder.accept(uri.getAsString()));
                 return String.join(",", builder.build().collect(Collectors.toList()));

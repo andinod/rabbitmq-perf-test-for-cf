@@ -4,10 +4,11 @@ applications:
     path: ./target/pcf-perf-test-1.0-SNAPSHOT.jar
     buildpacks: 
       - https://github.com/cloudfoundry/java-buildpack.git
-    memory: 768M
+    memory: 750M
     health-check-type: process
-    services: [rmq]
+    services: [rmq-david-perftest-ssl]
     env:
+      JBP_CONFIG_OPEN_JDK_JRE: '{jre: { version: 21.+ }}'
 #      AUTOACK:
 #      AUTO_DELETE:
 #      BODY:
@@ -15,7 +16,7 @@ applications:
 #      CMESSAGES:
 #      CONFIRM:
 #      CONFIRM_TIMEOUT:
-#      CONSUMERS:
+      CONSUMERS: 1
 #      CONSUMER_CHANNEL_COUNT:
 #      CONSUMER_LATENCY:
 #      CONSUMER_RATE:
@@ -41,7 +42,7 @@ applications:
 #      OUTPUT_FILE:
 #      PMESSAGES:
 #      PREDECLARED:
-#      PRODUCERS:
+      PRODUCERS: 1
 #      PRODUCER_CHANNEL_COUNT:
 #      PRODUCER_RANDOM_START_DELAY:
 #      PRODUCER_SCHEDULER_THREADS:
